@@ -1,0 +1,10 @@
+{% extends 'bank_base_dashboard.html' %}
+
+{% load static %}
+
+{% block content %}
+    <h1>Allocation Successful</h1>
+    <p>Your allocation of allocation number <i><span class="username">{{ allocation_no }}</span></i> has been successfully processed.</p>
+    <a href="{% url 'bank-dashboard' %}">Home</a>
+   
+ {% endblock %}

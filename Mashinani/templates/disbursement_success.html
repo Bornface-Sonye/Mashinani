@@ -1,0 +1,10 @@
+{% extends 'bank_base_dashboard.html' %}
+
+{% load static %}
+
+{% block content %}
+    <h1>Disbursement Successful</h1>
+    <p>Your Disbursement of Trasaction number <i><span class="username">{{ trasaction_no }}</span></i> has been successfully processed.</p>
+    <a href="{% url 'bank-dashboard' %}">Home</a>
+   
+{% endblock %}

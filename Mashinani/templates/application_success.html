@@ -1,0 +1,10 @@
+{% extends 'member_base_dashboard.html' %}
+
+{% load static %}
+
+{% block content %}
+    <h1>Application Successful</h1>
+    <p>Your Application of Application number <i><span class="username">{{ application_no }}</span></i> has been successfully processed.</p>
+    <a href="{% url 'member-dashboard' %}">Home</a>
+   
+ {% endblock %}

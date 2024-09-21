@@ -19,27 +19,31 @@
         <img src="{% static 'img/connect.png' %}" alt="Mashinani">
     </div>
     <nav class="navigation" role="navigation" aria-label="Main Navigation">
-        <a href="{% url 'dashboard' %}" class="nav-item"><i class="bi bi-house-door icon-home"></i> Home</a>
-        
-        <!-- Sent Parcels Dropdown -->
+        <a href="{% url 'bank-dashboard' %}" class="nav-item"><i class="bi bi-house-door icon-home"></i> Home</a>
+
+        <!-- Loans Dropdown -->
         <a class="nav-item" data-bs-toggle="collapse" href="#sentCollapse" role="button" aria-expanded="false" aria-controls="sentCollapse">
-            <i class="bi bi-box-seam icon-sent"></i> Group
+            <i class="bi bi-box-seam icon-sent"></i> Loans
         </a>
         <div class="collapse" id="sentCollapse">
-            <a href="{% url 'register-group' %}" class="nav-item collapse-item"><i class="bi bi-eye icon-view-sent"></i> Add Group</a>
+            <a href="{% url 'allocations-list' %}" class="nav-item collapse-item"><i class="bi bi-eye icon-view-sent"></i> Allocations</a>
         </div>
-        
-        <!-- Received Parcels Dropdown -->
-        <a class="nav-item" data-bs-toggle="collapse" href="#receivedCollapse" role="button" aria-expanded="false" aria-controls="receivedCollapse">
-            <i class="bi bi-inbox icon-received"></i> Bank
+        <div class="collapse" id="sentCollapse">
+            <a href="{% url 'member-loans-list' %}" class="nav-item collapse-item"><i class="bi bi-eye icon-view-sent"></i> View Loans</a>
+        </div>
+
+        <!-- Messages Dropdown -->
+        <a class="nav-item" data-bs-toggle="collapse" href="#sentCollapse" role="button" aria-expanded="false" aria-controls="sentCollapse">
+            <i class="bi bi-box-seam icon-sent"></i> Messages
         </a>
-        <div class="collapse" id="receivedCollapse">
-            <a href="{% url 'register-bank' %}" class="nav-item collapse-item"><i class="bi bi-eye icon-view-received"></i> Add Bank</a>
+        <div class="collapse" id="sentCollapse">
+            <a href="{% url 'sent-messages-list' %}" class="nav-item collapse-item"><i class="bi bi-eye icon-view-sent"></i> Sent</a>
         </div>
-        
-        <a href="{% url 'members' %}" class="nav-item"><i class="bi bi-info-circle icon-about"></i> View Members</a>
-        <a href="{% url 'dashboard' %}" class="nav-item"><i class="bi bi-question-circle icon-faq"></i> FAQs</a>
-        <a href="{% url 'dashboard' %}" class="nav-item"><i class="bi bi-box-arrow-right icon-logout"></i> Logout</a>
+        <div class="collapse" id="sentCollapse">
+            <a href="{% url 'received-messages-list' %}" class="nav-item collapse-item"><i class="bi bi-eye icon-view-sent"></i> Received</a>
+        </div>
+        <a href="{% url 'member-faqs' %}" class="nav-item"><i class="bi bi-question-circle icon-faq"></i> FAQs</a>
+        <a href="{% url 'logout' %}" class="nav-item"><i class="bi bi-box-arrow-right icon-logout"></i> Logout</a>
     </nav>
 </aside>
 <!-- Main Content Section -->

@@ -1,9 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Group Members</title>
+{% extends 'group_base_dashboard.html' %}
+
+{% load static %}
+
+{% block content %}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha384-DyZ88mC6Up2uqS2hK9QeWtr+4a0sW3k5DXRzA4vY7TQIiUU0C5Hn3Ua0yxyUtI1c" crossorigin="anonymous">
     <style>
         .sr-only {
@@ -83,5 +82,4 @@
         </tbody>
     </table>
 
-</body>
-</html>
+    {% endblock %}

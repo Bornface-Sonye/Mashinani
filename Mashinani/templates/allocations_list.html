@@ -1,0 +1,51 @@
+{% extends 'member_base_dashboard.html' %}
+
+{% load static %}
+
+{% block content %}
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <h1>Loan Allocations</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Allocation No</th>
+                <th>Bank No</th>
+                <th>Amount</th>
+                <th>Allocation Date</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for allocation in allocations %}
+                <tr>
+                    <td>{{ allocation.allocation_no }}</td>
+                    <td>{{ allocation.bank_no }}</td>
+                    <td>{{ allocation.amount }}</td>
+                    <td>{{ allocation.allocation_date }}</td>
+                    <td><a href="{% url 'loan-application' allocation.allocation_no %}">Apply</a></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6">No allocations yet.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

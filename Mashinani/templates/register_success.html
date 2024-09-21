@@ -1,4 +1,4 @@
-{% extends 'base_authentication.html' %}
+{% extends 'base_dashboard.html' %}
 
 {% load static %}
 
@@ -7,8 +7,10 @@
 <div class="container mt-5">
     <div class="card shadow-sm border-0">
         <div class="card-body text-center">
-            <h2 class="card-title text-success">Account Created Successfully!</h2>
-            <a href="{% url 'home' %}" class="btn btn-primary mt-3">Back to home</a>
+           <b> <h2 class="card-title text-success">User added Successfully!</h2></b>
+            <i><p class="serial-number"> Username is, <span class="username">{{ username }}</span></p></i>
+            <p class="card-title text-success">Guide the user on how to Create and Activate account!</p>
+            <a href="{% url 'dashboard' %}" class="btn btn-primary mt-3">Back to home</a>
         </div>
     </div>
 </div>
