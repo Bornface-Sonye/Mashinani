@@ -61,16 +61,11 @@ class GroupSignUpView(View):
             username = form.cleaned_data['username']
             password_hash = form.cleaned_data['password_hash']
             
-            # Check if username exist in the Bank model
-            username_exists = Group.objects.filter(username=username).exists()
-
-            if not username_exists:
-                # If either lender_no or username does not exist in the Lender model
-                error_message = ""
-                error_message += " The username does not exist. Please register as a group first."
-
-                form.add_error(None, error_message)
-                return render(request, self.template_name, {'form': form}, error_message)
+            # Check if username exists in the Bank model
+            if not Group.objects.filter(username=username).exists():
+                # Add error message to the form
+                form.add_error('username', "The username does not exist. Please register as a group first.")
+                return render(request, self.template_name, {'form': form})
             
             # Check if username already exists in System_User model
             if System_User.objects.filter(username=username).exists():
@@ -100,17 +95,13 @@ class BankSignUpView(View):
         if form.is_valid():
             username = form.cleaned_data['username']
             password_hash = form.cleaned_data['password_hash']
-            
-            # Check if username exist in the Bank model
-            username_exists = Bank.objects.filter(username=username).exists()
-            
-            if not username_exists:
-                # If username does not exist in the Bank model
-                error_message = ""
-                error_message += " The username does not exist. Please register as a bank first."
 
-                form.add_error(None, error_message)
-                return render(request, self.template_name, {'form': form}, error_message)
+            # Check if username exists in the Bank model
+            if not Bank.objects.filter(username=username).exists():
+                # Add error message to the form
+                form.add_error('username', "The username does not exist. Please register as a bank first.")
+                return render(request, self.template_name, {'form': form})
+
             # Check if username already exists in System_User model
             if System_User.objects.filter(username=username).exists():
                 form.add_error('username', "This username has already been used in the system!")
@@ -125,6 +116,7 @@ class BankSignUpView(View):
         else:
             # If the form is not valid, render the template with the form and errors
             return render(request, self.template_name, {'form': form})
+
         
 class MemberSignUpView(View):
     template_name = 'member_signup.html'
@@ -139,16 +131,12 @@ class MemberSignUpView(View):
         if form.is_valid():
             username = form.cleaned_data['username']
             password_hash = form.cleaned_data['password_hash']
-            # Check if username exist in the Member model
-            username_exists = Member.objects.filter(username=username).exists()
-
-            if not username_exists:
-                # If either lender_no or username does not exist in the Lender model
-                error_message = ""
-                error_message += " The username does not exist. Please register as a member first."
-
-                form.add_error(None, error_message)
-                return render(request, self.template_name, {'form': form}, error_message)
+           
+            # Check if username exists in the Bank model
+            if not Member.objects.filter(username=username).exists():
+                # Add error message to the form
+                form.add_error('username', "The username does not exist. Please register as a member first.")
+                return render(request, self.template_name, {'form': form})
             
             # Check if username already exists in System_User model
             if System_User.objects.filter(username=username).exists():

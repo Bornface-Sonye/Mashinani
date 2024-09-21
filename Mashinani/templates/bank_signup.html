@@ -20,8 +20,12 @@
             {% for field in form %}
                 <div class="form-group">
                     <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-                    {{ field  }}
-                    <span id="{{ field.id_for_label|slugify }}-error" class="error-message">{{ form.errors.field }}</span>
+                    {{ field }}
+                    {% if field.errors %}
+                        <span id="{{ field.id_for_label|slugify }}-error" class="error-message text-danger">
+                            {{ field.errors.as_text }}
+                        </span>
+                    {% endif %}
                 </div>
             {% endfor %}
             <button type="submit" class="btn btn-primary btn-block">Register</button>

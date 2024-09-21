@@ -86,12 +86,8 @@ WSGI_APPLICATION = 'Pesa.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': '',  # Your PostgreSQL database name
-        'USER': '',       # Your PostgreSQL username
-        'PASSWORD': '',   # Your PostgreSQL password
-        'HOST': '',                    # Your PostgreSQL host (usually 'localhost' for local installations)
-        'PORT': '3306',                         # Use the default PostgreSQL port
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
