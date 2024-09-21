@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -26,6 +26,9 @@ SECRET_KEY = 'django-insecure-k1ztvx7qov7a7#4)dsmhc!)fb&umtm-wyq%5^9-h)+6&4ti+8-
 DEBUG = True
 
 ALLOWED_HOSTS = []
+
+# Ensure that all HTTP requests are redirected to HTTPS
+#SECURE_SSL_REDIRECT = True
 
 # Email settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -121,10 +124,15 @@ USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.2/howto/static-files/
+# https://docs.djangoproject.com/en/5.0/howto/static-files/
+STATIC_URL = '/static/'
 
-STATIC_URL = 'static/'
+# App-level static files
+APP_STATIC_ROOT = os.path.join(BASE_DIR, 'Mashinani/static/')
+STATICFILES_DIRS = [APP_STATIC_ROOT]
 
+# Absolute filesystem path to the directory that will hold collected static files.
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
