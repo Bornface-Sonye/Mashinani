@@ -5,9 +5,9 @@ from .views import (
     MemberSignUpView, GroupLoginView, BankLoginView, MemberLoginView, Group_DashboardView, Bank_DashboardView,
     Member_DashboardView, DefaultersView, DefaulterListView, DefaulterUpdateView, DefaulterDeleteView, AllocationView, 
     AllocationSuccessView, AllocationsView, ApplicationView, ApplicationSuccessView, RequestsView, DisbursementView,
-    DisbursementSuccessView, LoanPaymentView, PaymentSuccessView, MemberLoansView, BankLoansView, SentMessagesView, 
-    RcvdMessagesView, GroupFAQsView, BankFAQsView, MemberFAQsView, LogoutView, ResetPasswordView, ResetPasswordConfirmView, 
-    PasswordResetSuccessView
+    DisbursementSuccessView, LoanPaymentView, PaymentSuccessView, MemberLoansView, BankLoansView, BankSentMessagesView,
+    BankRcvdMessagesView, MemberSentMessagesView,   MemberRcvdMessagesView, GroupFAQsView, BankFAQsView, MemberFAQsView, 
+    LogoutView, ResetPasswordView, ResetPasswordConfirmView, PasswordResetSuccessView
 )
 
 urlpatterns = [
@@ -21,8 +21,8 @@ urlpatterns = [
     path('defaulters/delete/<int:pk>/', DefaulterDeleteView.as_view(), name='defaulter-delete'),
     path('add/member', AddMemberView.as_view(), name='add-member'),
     path('members/', MemberListView.as_view(), name='member-list'),
-    path('update/member/',  MemberUpdateView.as_view(), name='member-update'),
-    path('delete/member/', MemberDeleteView.as_view(), name='member-delete'),
+    path('update/member/<int:pk>/',  MemberUpdateView.as_view(), name='member-update'),
+    path('delete/member/<int:pk>/', MemberDeleteView.as_view(), name='member-delete'),
     path('register/',AdminSignUpView.as_view(), name='admin-signup'),
     path('login/',AdminLoginView.as_view(), name='admin-login'),
     path('group/register/',GroupSignUpView.as_view(), name='group-signup'),
@@ -47,8 +47,10 @@ urlpatterns = [
     path('bank/loans/', BankLoansView.as_view(), name='bank-loans-list'),
     path('payment/<str:transaction_no>/', LoanPaymentView.as_view(), name='loan-payment'),
     path('payment/success/<str:transaction_no>/', PaymentSuccessView.as_view(), name='disbursement-success'),
-    path('sent/messages/', SentMessagesView.as_view(), name='sent-messages-list'),
-    path('received/messages/', RcvdMessagesView.as_view(), name='received-messages-list'),
+    path('member/sent/messages/', MemberSentMessagesView.as_view(), name='member-sent-messages-list'),
+    path('member/received/messages/', MemberRcvdMessagesView.as_view(), name='member-received-messages-list'),
+    path('bank/sent/messages/', BankSentMessagesView.as_view(), name='bank-sent-messages-list'),
+    path('bank/received/messages/', BankRcvdMessagesView.as_view(), name='bank-received-messages-list'),
     path('group/frequently/asked/questions/', GroupFAQsView.as_view(), name='group-faqs'),
     path('bank/frequently/asked/questions/', BankFAQsView.as_view(), name='bank-faqs'),
     path('member/frequently/asked/questions/', MemberFAQsView.as_view(), name='member-faqs'),

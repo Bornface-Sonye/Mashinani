@@ -327,7 +327,7 @@ class PasswordResetForm(forms.Form):
             raise forms.ValidationError("This Username is not associated with any account.")
         return username
     
-    
+ 
 class ResetForm(forms.ModelForm):
     confirm_password = forms.CharField(
         widget=forms.PasswordInput(attrs={'placeholder': 'Confirm Password', 'class': 'form-control'})

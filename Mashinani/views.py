@@ -1,3 +1,4 @@
+from .utils import *
 from .models import (
     County, Constituency, Ward, Account, Group, Guarantor, Bank, Member, System_User, Allocation, Application, 
     Disbursement, Loan, Message, Loanee, Defaulter, PasswordResetToken
@@ -5,13 +6,13 @@ from .models import (
 
 from .forms import (
    GroupForm, BankForm, MemberForm, AdminSignUpForm, BankSignUpForm, GroupSignUpForm, MemberSignUpForm, LoginForm,
-   DefaulterForm, PaymentForm, ApplicationForm, DisbursementForm, AllocationForm
+   DefaulterForm, PaymentForm, ApplicationForm, DisbursementForm, AllocationForm, PasswordResetForm , ResetForm  
 )
 from django import forms
 from django.urls import reverse_lazy, reverse
 from django.shortcuts import render, redirect
 from django.views import View
-from django.views.generic import UpdateView, DeleteView, ListView, TemplateView
+from django.views.generic import UpdateView, DeleteView, ListView, TemplateView, FormView
 
 from django.conf import settings
 from django.core.mail import send_mail
@@ -24,6 +25,23 @@ from .forms import PasswordResetForm
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from datetime import timedelta
+
+
+from django.db import models
+from django.db.models import DecimalField
+from django.core.exceptions import ValidationError
+from django.db.models import Sum
+from decimal import Decimal
+from django import forms
+import string
+import random
+from datetime import datetime
+import time
+import hashlib
+import uuid
+from django.core.mail import send_mail
+from django.conf import settings
+from django.utils.crypto import get_random_string
 
 class ResetPasswordView(View):
     template_name = 'reset_password.html'
@@ -200,7 +218,7 @@ class GroupSignUpView(View):
             new_account.role_name = "Group"
             new_account.set_password(password_hash)
             new_account.save()
-            return redirect('group_login')
+            return redirect('group-login')
         else:
             # If the form is not valid, render the template with the form and errors
             return render(request, self.template_name, {'form': form})
@@ -235,7 +253,7 @@ class BankSignUpView(View):
             new_account.role_name = "Bank"
             new_account.set_password(password_hash)
             new_account.save()
-            return redirect('bank_login')
+            return redirect('bank-login')
         else:
             # If the form is not valid, render the template with the form and errors
             return render(request, self.template_name, {'form': form})
@@ -271,7 +289,7 @@ class MemberSignUpView(View):
             new_account.role_name = "Member"
             new_account.set_password(password_hash)
             new_account.save()
-            return redirect('member_login')
+            return redirect('member-login')
         else:
             # If the form is not valid, render the template with the form and errors
             return render(request, self.template_name, {'form': form})
@@ -459,7 +477,7 @@ class Group_DashboardView(View):
         except System_User.DoesNotExist:
             return redirect('group-login')
 
-        return render(request, 'group-dashboard.html', {'user': user})
+        return render(request, 'group_dashboard.html', {'user': user})
     
 class Bank_DashboardView(View):
     def get(self, request):
@@ -488,7 +506,7 @@ class Bank_DashboardView(View):
         except System_User.DoesNotExist:
             return redirect('bank-login')
 
-        return render(request, 'bank-dashboard.html', {'user': user})
+        return render(request, 'bank_dashboard.html', {'user': user})
     
 class Member_DashboardView(View):
     def get(self, request):
@@ -517,7 +535,7 @@ class Member_DashboardView(View):
         except System_User.DoesNotExist:
             return redirect('member-login')
 
-        return render(request, 'member-dashboard.html', {'user': user})
+        return render(request, 'member_dashboard.html', {'user': user})
  
 class Register_GroupView(View):
     template_name = 'register_group.html'
@@ -695,7 +713,7 @@ class AddMemberView(View):
         except (System_User.DoesNotExist, Group.DoesNotExist):
             return redirect('home')
 
-        form = GroupMemberForm()
+        form = MemberForm()
         context = {
             'user': user,
             'group': group,
@@ -704,7 +722,7 @@ class AddMemberView(View):
         return render(request, 'add_member.html', context)
 
     def post(self, request):
-        form = GroupMemberForm(request.POST)
+        form = MemberForm(request.POST)
         username = request.session.get('username')
         if not username:
             return redirect('home')
@@ -743,7 +761,7 @@ class AddMemberView(View):
                 
                 # Create and save the account
                 account = Account(
-                    account_no=account,
+                    account_no=account_no,
                     account_name=f'{first_name}  {last_name}',
                     account_bal=0.00,
                 )
@@ -775,7 +793,7 @@ class MemberListView(ListView):
     def get(self, request):
         username = request.session.get('username')
         if not username:
-            return redirect('home')  # Redirect to login if username is not in session
+            return redirect('group-login')  # Redirect to login if username is not in session
         try:
             # Query the user from the database using the username
             user = System_User.objects.get(username=username)
@@ -796,7 +814,7 @@ class MemberListView(ListView):
 
 class MemberUpdateView(UpdateView):
     model = Member
-    fields = ['national_id_no', 'email_address', 'username', 'first_name', 'last_name', 'phone_number', 'dob', 'gender', 'group_no', 'grp_worth', 'account', 'approved', 'loan_status', 'loan_bal']
+    fields = ['national_id_no', 'email_address', 'username', 'first_name', 'last_name', 'phone_number', 'dob', 'gender', 'group_no', 'grp_worth', 'account_no', 'approved', 'loan_status', 'loan_bal']
     widgets = {
             'gender': forms.RadioSelect(choices=Member.GENDER_CHOICES),
         }
@@ -954,7 +972,7 @@ class AllocationView(View):
             # Fetch the lender and their account balance
             try:
                 bank = Bank.objects.get(bank_no=bank_no)
-                account = Account.objects.get(account_no=bank.account_no.account_no)
+                account = Account.objects.get(account_no=bank.account.account_no)
                 account_balance = account.account_bal
             except Bank.DoesNotExist:
                 return redirect('bank-dashboard')
@@ -965,6 +983,7 @@ class AllocationView(View):
             if amount > (account_balance - 2000):
                 return render(request, self.template_name, {
                     'form': form,
+                    'allocation_no': allocation_no,
                     'error_message': f'The allocated amount must be less than {account_balance - 2000}.'
                 })
 
@@ -975,7 +994,7 @@ class AllocationView(View):
             allocation.bank_no = bank_no  # Assign lender_no from session
             allocation.save()
             
-            return redirect('allocation-success', kwargs={'allocation_no': allocation_no})
+            return redirect('allocation-success', {'allocation_no': allocation_no})
         
 
         else:
@@ -1018,7 +1037,7 @@ class ApplicationView(FormView):
         
         kwargs['initial'] = {
             'allocation_no': allocation_no,
-            'application_no': self.generate_unique_application_number(),
+            'application_no': unique_application_number(),
             'application_date': timezone.now().date(),
             'national_id_no': national_id_no  # Add borrower_no to initial data
         }
@@ -1046,8 +1065,8 @@ class ApplicationView(FormView):
         national_id_no = member.national_id_no
 
         
-        group_no = member.group.group_no if hasattr(member.group, 'group_no') else member.group  # Ensure this is fetching the correct attribute
-        member_count = Member.objects.filter(group=member.group).count()
+        group_no = member.group_no.group_no if hasattr(member.group_no, 'group_no') else member.group_no  # Ensure this is fetching the correct attribute
+        member_count = Member.objects.filter(group_no=member.group_no).count()
 
         
 
@@ -1059,7 +1078,7 @@ class ApplicationView(FormView):
         account = get_object_or_404(Account, account_no=group.account.account_no)
         total_allocations = 10
         grp_worth = account.account_bal
-        account_n = member.account
+        account_n = member.account_no
         member_acc = get_object_or_404(Account, account_no=account_n)
         member_bal = member_acc.account_bal
         # Additional logic you have in your form_valid method
@@ -1084,7 +1103,7 @@ class ApplicationView(FormView):
         bank = get_object_or_404(Bank, bank_no=allocation.bank_no)
 
         # Calculate the total applied amount for the allocation_no
-        total_applied_amount = Application.objects.filter(allocation_no=allocation_no).aggregate(total=models.Sum('loan_amount'))['total'] or 0
+        total_applied_amount = Application.objects.filter(allocation_no=allocation.allocation_no).aggregate(total=models.Sum('loan_amount'))['total'] or 0
         remaining_amount = allocation.amount - total_applied_amount
 
         # Check if the loan amount to be applied is less than or equal to the remaining amount
@@ -1115,7 +1134,7 @@ class ApplicationView(FormView):
         
         # Check if the member has any unsettled loans with a balance above 0   
         loanee = get_object_or_404(Loanee, national_id_no=national_id_no)    
-        if loanee.approved != 'YES':
+        if loanee.approved == 'no':
             return render(self.request, self.template_name, {
                 'form': form,
                 'allocation_no': allocation_no,
@@ -1123,7 +1142,7 @@ class ApplicationView(FormView):
                 'error_message': 'You already have unsettled loan(s). Please settle your loan(s) first!'
             })
             
-        if loanee.applied != 'NO':
+        if loanee.applied == 'yes':
             return render(self.request, self.template_name, {
                 'form': form,
                 'allocation_no': allocation_no,
@@ -1138,15 +1157,15 @@ class ApplicationView(FormView):
         message_no = self.generate_unique_message_number()
         message = Message(
             message_no=message_no,
-            sender_username=borrower.username,  # Borrower's username
-            recipient_username=lender.username,  # Lender's username
+            sender_username=member.username,  # Borrower's username
+            recipient_username=bank.username,  # Lender's username
             message_name='Loan Application Submitted',
             message_description=f'Loan Application of Application Number {application_no} has been submitted.',
             message_date=timezone.now().date()
         )
         message.save()
         
-        return redirect('application-success', kwargs={'application_no': application_no})
+        return redirect('application-success', {'application_no': application_no})
 
     def form_invalid(self, form):
         allocation_no = self.kwargs['allocation_no']
@@ -1253,18 +1272,18 @@ class DisbursementView(FormView):
                 'error_message': 'You can not Disburse Amount less than Kshs 100'
             })
         
-        member_account = Account.objects.get(account_no=member.account)
+        member_account = Account.objects.get(account_no=member.account_no)
 
-        # Fetch the lender's account
-        bank_account = get_object_or_404(Account, account_no=bank.account_no.account_no)
+        # Fetch the bank's account
+        bank_account = get_object_or_404(Account, account_no=bank.account.account_no)
 
-        # Check if the lender's account has sufficient balance
+        # Check if the bank's account has sufficient balance
         if bank_account.account_bal < entered_amount:
             return render(self.request, self.template_name, {
                 'form': form,
                 'application_no': application_no,
                 'error_transaction_no': form.cleaned_data.get('transaction_no', None),
-                'error_message': f'Insufficient account balance. Current balance is {lender_account.account_bal}.'
+                'error_message': f'Insufficient account balance. Current balance is {bank_account.account_bal}.'
             })
 
         # Update lender's account balance
@@ -1287,16 +1306,16 @@ class DisbursementView(FormView):
         form.save()
         
         loanee = get_object_or_404(Loanee, national_id_no=national_id_no)
-        loanee.approved = 'NO'
-        loanee.applied = 'NO'
+        loanee.approved = 'no'
+        loanee.applied = 'no'
         loanee.save()
 
         # Create and save the message
         message_no = self.generate_unique_message_number()
         message = Message(
             message_no=message_no,
-            sender_username=lender.username,
-            recipient_username=borrower.username,
+            sender_username=bank.username,
+            recipient_username=member.username,
             message_name='Disbursement Successfully Submitted',
             message_description=f'Transaction Number {transaction_no} for amount {entered_amount} has been submitted.',
             message_date=timezone.now().date()
@@ -1319,7 +1338,7 @@ class DisbursementView(FormView):
         )
         loan.save()
         
-        return redirect('disbursement-success', kwargs={'transaction_no': transaction_no})
+        return redirect('disbursement-success', {'transaction_no': transaction_no})
         
     def form_invalid(self, form):
         application_no = self.kwargs['application_no']
@@ -1367,7 +1386,7 @@ class BankLoansView(ListView):
         return render(request, self.template_name, {'loans_to_be_paid': loans_to_be_paid})
     
 class MemberLoansView(ListView):
-    template_name = 'borrower_loans.html'
+    template_name = 'member_loans.html'
     
     context_object_name = 'loans_to_pay'
 
@@ -1390,7 +1409,7 @@ class MemberLoansView(ListView):
         return render(request, self.template_name, {'loans_to_pay': loans_to_pay})
     
 class LoanPaymentView(View):
-    template_name = 'payment_form.html'
+    template_name = 'payment.html'
 
     def get(self, request, transaction_no):
         loan = get_object_or_404(Loan, transaction_no=transaction_no)
@@ -1421,9 +1440,9 @@ class LoanPaymentView(View):
             member = get_object_or_404(Member, national_id_no=national_id_no)
             bank = get_object_or_404(Bank, bank_no=bank_no)
             
-            member_account = get_object_or_404(Account, account_no=member.account)
+            member_account = get_object_or_404(Account, account_no=member.account_no)
 
-            bank_account = get_object_or_404(Account, account_no=bank.account_no.account_no)
+            bank_account = get_object_or_404(Account, account_no=bank.account.account_no)
 
             if member_account.account_bal < payment_amount:
                 error_message = 'You have Insufficient Account Balance to Complete this Transaction.'
@@ -1474,7 +1493,7 @@ class LoanPaymentView(View):
                 loanee.save()
 
             
-            bmember_account.account_bal -= payment_amount
+            member_account.account_bal -= payment_amount
             member_account.save()
 
             # Update lender's and borrower's account balances
@@ -1482,7 +1501,7 @@ class LoanPaymentView(View):
             bank_account.save()
 
             # Create and save the message
-            message_no = generate_unique_message_number()
+            message_no = self.generate_unique_message_number()
             message = Message(
                 message_no=message_no,
                 sender_username=bank.username,
@@ -1497,7 +1516,7 @@ class LoanPaymentView(View):
             )
             message.save()
             
-            return redirect('payment-success', kwargs={'transaction_no': transaction_no})
+            return redirect('payment-success', {'transaction_no': transaction_no})
 
         error_message = 'Payment failed. Please correct the errors below.'
         return render(request, self.template_name, {
@@ -1506,6 +1525,14 @@ class LoanPaymentView(View):
             'transaction_no': transaction_no,
             'error_message': error_message,
         })
+        
+    def generate_unique_message_number(self):
+        while True:
+            letters = ''.join(random.choices(string.ascii_uppercase, k=3))
+            digits = ''.join(random.choices(string.digits, k=3))
+            message_no = letters + digits
+            if not Message.objects.filter(message_no=message_no).exists():
+                return message_no
         
 class PaymentSuccessView(TemplateView):
     template_name = 'payment_success.html'
@@ -1517,15 +1544,15 @@ class PaymentSuccessView(TemplateView):
 
 
  
-class SentMessagesView(ListView):
-    template_name = 'messages.html'
+class BankSentMessagesView(ListView):
+    template_name = 'bank_sent_messages.html'
     context_object_name = 'messages'
 
     def get(self, request):
         # Check if user is logged in and retrieve their information
         username = request.session.get('username')
         if not username:
-            return redirect('home')
+            return redirect('bank-login')
         
         # Initialize message lists as empty
         mssgs = []
@@ -1538,15 +1565,57 @@ class SentMessagesView(ListView):
             'mssgs': mssgs,
         }) 
         
-class RcvdMessagesView(ListView):
-    template_name = 'messages.html'
+class BankRcvdMessagesView(ListView):
+    template_name = 'bank_received_messages.html'
     context_object_name = 'messages'
 
     def get(self, request):
         # Check if user is logged in and retrieve their information
         username = request.session.get('username')
         if not username:
-            return redirect('home')
+            return redirect('bank-login')
+        
+        # Initialize message lists as empty
+        mssgs = []
+        
+        if username:
+            mssgs = Message.objects.filter(recipient_username=username)
+
+        # Pass mssgs to the template
+        return render(request, self.template_name, {
+            'mssgs': mssgs,
+        })   
+
+class MemberSentMessagesView(ListView):
+    template_name = 'member_sent_messages.html'
+    context_object_name = 'messages'
+
+    def get(self, request):
+        # Check if user is logged in and retrieve their information
+        username = request.session.get('username')
+        if not username:
+            return redirect('member-login')
+        
+        # Initialize message lists as empty
+        mssgs = []
+        
+        if username:
+            mssgs = Message.objects.filter(sender_username=username)
+
+        # Pass the loans to the template
+        return render(request, self.template_name, {
+            'mssgs': mssgs,
+        }) 
+        
+class MemberRcvdMessagesView(ListView):
+    template_name = 'member_received_messages.html'
+    context_object_name = 'messages'
+
+    def get(self, request):
+        # Check if user is logged in and retrieve their information
+        username = request.session.get('username')
+        if not username:
+            return redirect('member-login')
         
         # Initialize message lists as empty
         mssgs = []

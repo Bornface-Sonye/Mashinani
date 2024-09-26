@@ -4,43 +4,51 @@
 
 {% block content %}
 <div class="form-container">
-    <h1 class="page-title">Loan Disbursement Form</h1>
-    <form method="post" action="{% url 'loan-disbursement' application_no=application_no %}">
+    <h1 class="page-title">Loan Allocation Form</h1>
+    
+    <form method="post" action="{% url 'bank-allocation' %}">
         {% csrf_token %}
-       
-        <!-- Disbursement Information Section -->
+
+        <!-- Allocation Information Section -->
         <div class="form-section">
             <h2>Loan Information</h2>
-
+                    
             <div class="form-field">
-               <label for="{{ form.disbursed_amount.id_for_label }}" class="required">Amount:</label>
-               {{ form.disbursed_amount }}
-               {{ form.disbursed_amount.errors }}
+                <label for="{{ form.amount.id_for_label }}" class="required">Amount:</label>
+                {{ form.amount }}
+                {{ form.amount.errors }}
+            </div><br>
+            <div class="form-field">
+                <label for="{{ form.interest_rate.id_for_label }}" class="required">Interest Rate:</label>
+                {{ form.interest_rate }}
+                {{ form.interest_rate.errors }}
             </div><br>
         </div>
+
         <div class="form-buttons">
-           <button type="submit" class="submit-button blue-button">Disburse</button>
-           <button type="button" class="red-button">Cancel</button>
-           <button type="reset" class="gray-button">Clear</button>
+            <button type="submit" class="submit-button blue-button">Allocate</button>
+            <button type="button" class="red-button">Cancel</button>
+            <button type="reset" class="gray-button">Clear</button>
         </div>            
     </form>
 </div>
 
 <!-- Custom styled success message box (modal) -->
-<div id="customModalSuccessDisbursement" class="modal">
+<div id="customModalSuccessAllocation" class="modal">
     <div class="modal-content success">
         <span class="close">&times;</span>
         <div class="icon-container">
             <i class="fas fa-check-circle"></i>
         </div>
-        <p>Loan Transaction Number <span id="transactionNumber"></span> has been successfully Disbursed.</p>
+        <p>Loan Allocation Number <span id="allocationNumber"></span> has been successfully allocated.</p>
         <p>Thank you for trusting Pesa Mashinani, Asante Sana!</p>
     </div>
 </div>
 
 <!-- Custom styled error message box (modal) -->
+
 {% if error_message %}
-<div id="customModalErrorDisbursement" class="modal">
+<div id="customModalErrorAllocation" class="modal">
     <div class="modal-content error">
         <span class="close">&times;</span>
         <div class="icon-container">
@@ -50,7 +58,6 @@
     </div>
 </div>
 {% endif %}
-
 <style>
     .modal {
         display: none; 
@@ -129,14 +136,15 @@
     }
     </style>
 
+    
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            {% if transaction_no %}
-                var modalSuccess = document.getElementById("customModalSuccessDisbursement");
+            {% if allocation_no %}
+                var modalSuccess = document.getElementById("customModalSuccessAllocation");
                 var spanSuccess = modalSuccess.getElementsByClassName("close")[0];
-                var transactionNumber = document.getElementById("transactionNumber");
+                var allocationNumber = document.getElementById("allocationNumber");
                 
-                transactionNumber.textContent = "{{ transaction_no }}";
+                allocationNumber.textContent = "{{ allocation_no }}";
                 modalSuccess.style.display = "block";
     
                 spanSuccess.onclick = function() {
@@ -150,12 +158,12 @@
                 }
             {% endif %}
     
-            {% if error_transaction_no %}
-                var modalError = document.getElementById("customModalErrorDisbursement");
+            {% if error_allocation_no %}
+                var modalError = document.getElementById("customModalErrorAllocation");
                 var spanError = modalError.getElementsByClassName("close")[0];
-                var transactionNumberError = document.getElementById("transactionNumberError");
+                var allocationNumberError = document.getElementById("allocationNumberError");
                 
-                transactionNumberError.textContent = "{{ error_transaction_no }}";
+                allocationNumberError.textContent = "{{ error_allocation_no }}";
                 modalError.style.display = "block";
     
                 spanError.onclick = function() {

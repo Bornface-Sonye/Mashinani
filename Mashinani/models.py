@@ -176,8 +176,8 @@ class Application(models.Model):
     loan_amount = models.DecimalField(max_digits=15, decimal_places=2, help_text="Enter Amount to Request")
     proposed_amount = models.DecimalField(max_digits=15, decimal_places=2, help_text="Enter Amount Proposed")
     application_date = models.DateField(help_text="Enter Date of Application", blank=True)
-    national_id_no =  models.ForeignKey(Member, on_delete=models.CASCADE)
-    allocation_no = models.ForeignKey(Allocation, on_delete=models.CASCADE)
+    national_id_no =  models.CharField(max_length=100, help_text="Enter National Identification Number:")
+    allocation_no = models.CharField(max_length=50, help_text="Enter the Allocation Number", blank=True)
 
     def __str__(self):
         return f"Application - {self.application_no}"
@@ -189,8 +189,8 @@ class Disbursement(models.Model):
     disbursed_amount = models.DecimalField(max_digits=15, decimal_places=2, help_text="Enter Amount to Disburse")
     disbursement_date = models.DateField(help_text="Enter Date of Disbursement")
     loan_duration_months = models.IntegerField(help_text="Loan Duration in Months")
-    national_id_no =  models.ForeignKey(Member, on_delete=models.CASCADE)
-    application_no = models.ForeignKey(Application, on_delete=models.CASCADE)
+    national_id_no =  models.CharField(max_length=100, help_text="Enter National Identification Number:")
+    application_no = models.CharField(max_length=50, help_text="Enter the Application Number", blank=True)
 
     def __str__(self):
         return f"{self.transaction_no}"
@@ -205,9 +205,9 @@ class Loan(models.Model):
     amount_paid =  models.DecimalField(max_digits=15, decimal_places=2, help_text="Total Paid")
     balance =  models.DecimalField(max_digits=15, decimal_places=2, help_text="Balance")
     loan_date = models.DateField(help_text="Enter Date of last Payment",default='2024-01-01')
-    bank_no =  models.ForeignKey(Bank, on_delete=models.CASCADE)
-    national_id_no =  models.ForeignKey(Member, on_delete=models.CASCADE)
-    transaction_no =  models.ForeignKey(Disbursement, on_delete=models.CASCADE)
+    bank_no =  models.CharField(max_length=100, help_text="Enter Bank Number:")
+    national_id_no =  models.CharField(max_length=100, help_text="Enter National Identification Number:")
+    transaction_no =  models.CharField(max_length=30, help_text="Enter the Transaction Number", blank=True)
 
     def __str__(self):
         return f"{self.transaction_no}"
@@ -234,7 +234,7 @@ class Loanee(models.Model):
     ]
     approved = models.CharField(max_length=3, choices=APPROVAL_CHOICES, default=YES, help_text="Is member approved")
     applied = models.CharField(max_length=3, choices=APPROVAL_CHOICES, default=NO, help_text="Does member has an hanging application")
-    national_id_no =  models.ForeignKey(Member, on_delete=models.CASCADE)
+    national_id_no =  models.CharField(max_length=100, help_text="Enter National Identification Number:")
     
     def __str__(self):
         return f"{self.national_id_no} - Approved - {self.approved}"  

@@ -46,45 +46,39 @@
             text-decoration: underline;
         }
     </style>
+</head>
 <body>
-    <h1>Transactions</h1>
+    <h1>Messages</h1>
     
-    <!-- Disbursements Table -->
-    <h2>Loans Borrowed</h2>
+    
+    <!-- Messages -->
+    <h2>Messages Sent</h2>
     <table>
         <thead>
             <tr>
-                <th>Transaction No</th>
-                <th>Initial Payment No</th>
-                <th>Bank No</th>
-                <th>Amount Disbursed</th>
-                <th>Interest Charged</th>
-                <th>Total Amount</th>
-                <th>Amount Paid</th>
-                <th>Balance</th>
-                <th>Last Payment Date</th>
-                <th>Actions</th>
+                <th>Message ID.</th>
+                <th>Message Number</th>
+                <th>Recipient Username</th>
+                <th>Message Header</th>
+                <th>Message Content</th>
+                <th>Message Date</th>
             </tr>
         </thead>
         <tbody>
-            {% for loan in loans_to_pay %}
+            {% for mssg in mssgs %}
                 <tr>
-                    <td>{{ loan.transaction_no }}</td>
-                    <td>{{ loan.payment_no }}</td>
-                    <td>{{ loan.bank_no }}</td>
-                    <td>{{ loan.principal }}</td>
-                    <td>{{ loan.loan_interest }}</td>
-                    <td>{{ loan.principal_interest }}</td>
-                    <td>{{ loan.amount_paid }}</td>
-                    <td>{{ loan.balance }}</td>
-                    <td>{{ loan.loan_date }}</td>
-                    <td><a href="{% url 'loan-payment' loan.transaction_no %}">Pay Loan</a></td>
+                    <td>{{ mssg.message_id }}</td>
+                    <td>{{ mssg.message_no }}</td>
+                    <td>{{ mssg.recipient_username }}</td>
+                    <td>{{ mssg.message_name}}</td>
+                    <td>{{ mssg.message_description }}</td>
+                    <td>{{ mssg.message_date }}</td>
                 </tr>
             {% empty %}
                 <tr>
-                    <td colspan="4">No loans found.</td>
+                    <td colspan="6">No messages sent .</td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
-    {% endblock %}
+{% endblock %}

@@ -13,6 +13,17 @@ from django.shortcuts import render, redirect
 from django.views import View
 from django.views.generic import UpdateView, DeleteView, ListView, TemplateView
 
+import string
+import random
+from datetime import datetime
+import time
+import hashlib
+import uuid
+from django.core.mail import send_mail
+from django.conf import settings
+from django.utils.crypto import get_random_string
+from django.contrib.auth import logout as django_logout
+
 from django.views import View
 from django.shortcuts import render
 from django.http import HttpResponse
@@ -45,7 +56,7 @@ class MachineLearningModel:
         self.actual_labels = None
 
         # Assuming the CSV file is named 'pesa.csv' and located in the same directory as this script
-        self.file_path = os.path.join(settings.BASE_DIR, 'lender', 'pesa', 'pesa.csv')
+        self.file_path = os.path.join(settings.BASE_DIR, 'Mashinani', 'pesa', 'pesa.csv')
         # self.file_path = 'pesa.csv'  # Adjust as per your actual path
         self.df = pd.read_csv(self.file_path)
 
@@ -100,7 +111,7 @@ class LoanProposal:
         self.scaler = joblib.load('Model/scaler.pickle')
 
         # Load the CSV file for data retrieval        
-        self.file_path = os.path.join(settings.BASE_DIR, 'lender', 'pesa', 'pesa.csv')  # Adjust as per your actual path
+        self.file_path = os.path.join(settings.BASE_DIR, 'Mashinani', 'pesa', 'pesa.csv')  # Adjust as per your actual path
         self.df = pd.read_csv(self.file_path)
 
         # Update feature names based on the new CSV structure
@@ -199,7 +210,7 @@ def unique_payment_number():
     """Generate a unique allocation number not already in use."""
     while True:
         payment_no = generate_number()
-        if not  Loans.objects.filter(payment_no=payment_no).exists():
+        if not  Loan.objects.filter(payment_no=payment_no).exists():
             return payment_no
 
 

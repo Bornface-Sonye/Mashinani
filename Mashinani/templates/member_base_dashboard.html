@@ -33,14 +33,14 @@
         </div>
 
         <!-- Messages Dropdown -->
-        <a class="nav-item" data-bs-toggle="collapse" href="#sentCollapse" role="button" aria-expanded="false" aria-controls="sentCollapse">
+        <a class="nav-item" data-bs-toggle="collapse" href="#receivedCollapse" role="button" aria-expanded="false" aria-controls="sentCollapse">
             <i class="bi bi-box-seam icon-sent"></i> Messages
         </a>
-        <div class="collapse" id="sentCollapse">
-            <a href="{% url 'sent-messages-list' %}" class="nav-item collapse-item"><i class="bi bi-eye icon-view-sent"></i> Sent</a>
+        <div class="collapse" id="receivedCollapse">
+            <a href="{% url 'member-sent-messages-list' %}" class="nav-item collapse-item"><i class="bi bi-eye icon-view-sent"></i> Sent</a>
         </div>
-        <div class="collapse" id="sentCollapse">
-            <a href="{% url 'received-messages-list' %}" class="nav-item collapse-item"><i class="bi bi-eye icon-view-sent"></i> Received</a>
+        <div class="collapse" id="receivedCollapse">
+            <a href="{% url 'member-received-messages-list' %}" class="nav-item collapse-item"><i class="bi bi-eye icon-view-sent"></i> Received</a>
         </div>
         <a href="{% url 'member-faqs' %}" class="nav-item"><i class="bi bi-question-circle icon-faq"></i> FAQs</a>
         <a href="{% url 'logout' %}" class="nav-item"><i class="bi bi-box-arrow-right icon-logout"></i> Logout</a>

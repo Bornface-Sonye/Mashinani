@@ -26,24 +26,24 @@
             <i class="bi bi-box-seam icon-sent"></i> Loans
         </a>
         <div class="collapse" id="sentCollapse">
-            <a href="{% url 'allocate-loan' %}" class="nav-item collapse-item"><i class="bi bi-eye icon-view-sent"></i> Allocate Loan</a>
+            <a href="{% url 'bank-allocation' %}" class="nav-item collapse-item"><i class="bi bi-eye icon-view-sent"></i> Allocate Loan</a>
         </div>
         <div class="collapse" id="sentCollapse">
-            <a href="{% url 'loan-requests' %}" class="nav-item collapse-item"><i class="bi bi-eye icon-view-sent"></i> Loan Requests</a>
+            <a href="{% url 'applications-list' %}" class="nav-item collapse-item"><i class="bi bi-eye icon-view-sent"></i> Loan Requests</a>
         </div>
         <div class="collapse" id="sentCollapse">
-            <a href="{% url 'loans-list' %}" class="nav-item collapse-item"><i class="bi bi-eye icon-view-sent"></i> View Loans</a>
+            <a href="{% url 'bank-loans-list' %}" class="nav-item collapse-item"><i class="bi bi-eye icon-view-sent"></i> View Loans</a>
         </div>
 
         <!-- Messages Dropdown -->
-        <a class="nav-item" data-bs-toggle="collapse" href="#sentCollapse" role="button" aria-expanded="false" aria-controls="sentCollapse">
+        <a class="nav-item" data-bs-toggle="collapse" href="#receivedCollapse" role="button" aria-expanded="false" aria-controls="sentCollapse">
             <i class="bi bi-box-seam icon-sent"></i> Messages
         </a>
-        <div class="collapse" id="sentCollapse">
-            <a href="{% url 'sent-messages-list' %}" class="nav-item collapse-item"><i class="bi bi-eye icon-view-sent"></i> Sent</a>
+        <div class="collapse" id="receivedCollapse">
+            <a href="{% url 'bank-sent-messages-list' %}" class="nav-item collapse-item"><i class="bi bi-eye icon-view-sent"></i> Sent</a>
         </div>
-        <div class="collapse" id="sentCollapse">
-            <a href="{% url 'received-messages-list' %}" class="nav-item collapse-item"><i class="bi bi-eye icon-view-sent"></i> Received</a>
+        <div class="collapse" id="receivedCollapse">
+            <a href="{% url 'bank-received-messages-list' %}" class="nav-item collapse-item"><i class="bi bi-eye icon-view-sent"></i> Received</a>
         </div>
         <a href="{% url 'member-faqs' %}" class="nav-item"><i class="bi bi-question-circle icon-faq"></i> FAQs</a>
         <a href="{% url 'logout' %}" class="nav-item"><i class="bi bi-box-arrow-right icon-logout"></i> Logout</a>
