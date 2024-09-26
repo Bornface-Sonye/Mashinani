@@ -1500,7 +1500,7 @@ class LoanPaymentView(View):
             bank_account.account_bal += payment_amount
             bank_account.save()
 
-            # Create and save the message
+            
             message_no = self.generate_unique_message_number()
             message = Message(
                 message_no=message_no,
