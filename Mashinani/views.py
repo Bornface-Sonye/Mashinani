@@ -320,7 +320,7 @@ class MemberSignUpView(View):
             return render(request, self.template_name, {'form': form})
         
 class AdminLoginView(View):
-    template_name = 'admin_login.html'
+    template_name = 'admin.html'
 
     def get(self, request):
         form = LoginForm()

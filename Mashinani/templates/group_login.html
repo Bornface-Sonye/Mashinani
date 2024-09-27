@@ -1,54 +1,102 @@
-{% extends 'base_authentication.html' %}
 {% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+  	<title>Pesa Mashinani</title>
+    
+    <!-- Favicons -->
+  <link rel="icon" href="{% static 'img/connect.ico' %}" type="image/x-icon">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-{% block content %}
-<link rel="stylesheet" href="{% static 'css/login.css' %}">
-<link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+	<link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
 
-<div class="container">
-    <div class="login-form">
-        <h2 class="form-title">PESA MASHINANI</h2>
-        <form method="post" action="{% url 'group-login' %}" id="login-form">
-            {% csrf_token %}
-            {% if form.errors %}
-            <div class="alert alert-danger" role="alert">
-                {% for field, error_list in form.errors.items %}
-                    {% for error in error_list %}
-                        {{ error }}
-                    {% endfor %}
-                {% endfor %}
-            </div>
-            {% endif %}
-            <div class="form-group">
-                <label for="id_username" class="form-label">Email Address</label>
-                {{ form.username }}
-                <span id="email-error" class="error-message">{{ form.errors.username }}</span>
-            </div>
-            <div class="form-group">
-                <label for="id_password" class="form-label">Password</label>
-                {{ form.password }}
-                <span id="password-error" class="error-message">{{ form.errors.password }}</span>
-            </div>
-            <div class="form-group form-check">
-                <input type="checkbox" class="form-check-input" id="show-password-checkbox">
-                <label class="form-check-label" for="show-password-checkbox">Show Password</label>
-            </div>
-            <button type="submit" class="btn btn-primary btn-block">Login</button>
-        </form>
-        <div class="text-center mt-3">
-            <p>Don't have an account? <a href="{% url 'group-signup' %}" class="text-link">Register</a></p>
-            <p><a href="{% url 'reset-password' %}" class="text-link">Forgot your password?</a></p>
-        </div>
-    </div>
-</div>
-<script>
-    document.getElementById('show-password-checkbox').addEventListener('change', function () {
-        var passwordField = document.getElementById('id_password');
-        if (passwordField.type === 'password') {
-            passwordField.type = 'text';
-        } else {
-            passwordField.type = 'password';
-        }
-    });
-</script>
-{% endblock %}
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+	
+	<!--<link rel="stylesheet" href="css/style.css">-->
+    <link rel="stylesheet" href="{% static 'css/global/style.css' %}">
+
+	</head>
+	<body>
+	<section class="ftco-section">
+		<div class="container">
+			<div class="row justify-content-center">
+				<div class="col-md-6 text-center mb-5">
+					<h2 class="heading-section">Pesa Mashinani</h2>
+				</div>
+			</div>
+			<div class="row justify-content-center">
+				<div class="col-md-12 col-lg-10">
+					<div class="wrap d-md-flex">
+						<div class="img" style="background-image: url(img/bg-1.jpg);">
+                            <!--<div class="img" style="background-image: src="{% static 'img/bg-1.jpg' %}">-->
+			            </div>
+						<div class="login-wrap p-4 p-md-5">
+			      	<div class="d-flex">
+			      		<div class="w-100">
+			      			<h3 class="mb-4">Sign In</h3>
+			      		</div>
+								<div class="w-100">
+									<p class="social-media d-flex justify-content-end">
+										<a href="#" class="social-icon d-flex align-items-center justify-content-center"><span class="fa fa-facebook"></span></a>
+										<a href="#" class="social-icon d-flex align-items-center justify-content-center"><span class="fa fa-twitter"></span></a>
+									</p>
+								</div>
+			      	</div>
+                    <div>
+                      <form method="post" action="{% url 'group-login' %}" id="login-form">
+                        {% csrf_token %}
+                        {% if form.errors %}
+                        <div class="alert alert-danger" role="alert">
+                            {% for field, error_list in form.errors.items %}
+                                {% for error in error_list %}
+                                    {{ error }}
+                                {% endfor %}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+			      		<div class="form-group mb-3">
+			      			<label class="label" for="name">Username</label>
+			      			{{ form.username }}
+                            {{ form.errors.username }}
+			      		</div>
+		                <div class="form-group mb-3">
+		            	<label class="label" for="password">Password</label>
+                        {{ form.password }}
+                        {{ form.errors.password }}
+		            </div>
+		            <div class="form-group">
+		            	<button type="submit" class="form-control btn btn-primary rounded submit px-3">Sign In</button>
+		            </div>
+		            <div class="form-group d-md-flex">
+		            	<div class="w-50 text-left">
+			            	<label class="checkbox-wrap checkbox-primary mb-0">Remember Me
+									  <input type="checkbox" checked>
+									  <span class="checkmark"></span>
+										</label>
+									</div>
+									<div class="w-50 text-md-right">
+										<a href="{% url 'reset-password' %}">Forgot Password</a>
+									</div>
+		            </div>
+		          </form>
+                  <p class="text-center">Don't have an account? <a href="{% url 'group-signup' %}" class="text-link">Sign Up</a></p>
+		        </div>
+		      </div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+  <!--<script src="js/jquery.min.js"></script>
+  <script src="js/popper.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/main.js"></script>-->
+  <script src="{% static 'js/login/jquery.min.js' %}"></script>
+  <script src="{% static 'js/login/popper.js' %}"></script>
+  <script src="{% static 'js/login/bootstrap.min.js' %}"></script>
+  <script src="{% static 'js/login/main.js' %}"></script>
+
+	</body>
+</html>
+
