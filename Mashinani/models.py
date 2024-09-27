@@ -260,4 +260,14 @@ class PasswordResetToken(models.Model):
     def is_expired(self):
         expiration_time = self.created_at + timedelta(minutes=5)
         return timezone.now() > expiration_time
+    
+class Contact(models.Model):
+    message_id = models.AutoField(primary_key=True, unique=True)
+    full_name = models.CharField(max_length=50, help_text="Enter Full Name")
+    email_address = models.EmailField(max_length=50, help_text="Enter Email Address")
+    subject = models.CharField(max_length=100, help_text="Enter Subject", blank=True)
+    message = models.CharField(max_length=500, help_text="Enter Message", blank=True)
+   
+    def __str__(self):
+        return f"{self.full_name}" 
 

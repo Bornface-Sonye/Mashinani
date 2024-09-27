@@ -1,12 +1,12 @@
 from django.contrib import admin
 from .models import (
     County, Constituency, Ward, Account, Group, Guarantor, Bank, Member, System_User, Allocation, Application, 
-    Disbursement, Loan, Message, Loanee, Defaulter, PasswordResetToken, Role
+    Disbursement, Loan, Message, Loanee, Defaulter, PasswordResetToken, Role, Contact
 )
 
 models_to_register = [
     County, Constituency, Ward, Account, Group, Guarantor, Bank, Member, System_User, Allocation, Application, 
-    Disbursement, Loan, Message, Loanee, Defaulter, PasswordResetToken, Role
+    Disbursement, Loan, Message, Loanee, Defaulter, PasswordResetToken, Role, Contact
     
 ]
 

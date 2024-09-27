@@ -1,12 +1,13 @@
 from .utils import *
 from .models import (
     County, Constituency, Ward, Account, Group, Guarantor, Bank, Member, System_User, Allocation, Application, 
-    Disbursement, Loan, Message, Loanee, Defaulter, PasswordResetToken
+    Disbursement, Loan, Message, Loanee, Defaulter, PasswordResetToken, Contact
 )
 
 from .forms import (
    GroupForm, BankForm, MemberForm, AdminSignUpForm, BankSignUpForm, GroupSignUpForm, MemberSignUpForm, LoginForm,
-   DefaulterForm, PaymentForm, ApplicationForm, DisbursementForm, AllocationForm, PasswordResetForm , ResetForm  
+   DefaulterForm, PaymentForm, ApplicationForm, DisbursementForm, AllocationForm, PasswordResetForm , ResetForm, 
+   ContactForm 
 )
 from django import forms
 from django.urls import reverse_lazy, reverse
@@ -142,8 +143,32 @@ class PasswordResetSuccessView(View):
         return render(request, self.template_name)
 
 class HomePage_View(View):
+    template_name = 'index.html'
+    
     def get(self,request):
-        return render(request, 'index.html')
+        form = ContactForm()
+        return render(request, self.template_name, {'form': form})
+    
+    def post(self, request):
+        form = ContactForm(request.POST)
+
+        if form.is_valid():
+            full_name = form.cleaned_data['full_name']
+            email_address = form.cleaned_data['email_address']
+            subject = form.cleaned_data['subject']
+            message = form.cleaned_data['message']
+
+            # Create the account if all checks pass
+            user_message = form.save(commit=False)
+            user_message.full_name = full_name
+            user_message.email_address = email_address
+            user_message.subject = subject
+            user_message.message = message
+            user_message.save()
+            return redirect('home')
+        else:
+            # If the form is not valid, render the template with the form and errors
+            return render(request, self.template_name, {'form': form})
     
 class RegistrationSuccessView(TemplateView):
     template_name = 'register_success.html'

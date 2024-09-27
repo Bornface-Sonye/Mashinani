@@ -3,7 +3,7 @@ import re
 from django.contrib.auth.models import User
 from .models import (
     County, Constituency, Ward, Account, Group, Guarantor, Bank, Member, System_User, Allocation, Application, 
-    Disbursement, Loan, Message, Loanee, Defaulter, PasswordResetToken
+    Disbursement, Loan, Message, Loanee, Defaulter, PasswordResetToken, Contact
 )
 
 class GroupForm(forms.ModelForm):
@@ -357,4 +357,15 @@ class ResetForm(forms.ModelForm):
         instance.set_password(self.cleaned_data["password_hash"])
         if commit:
             instance.save()
-        return instance 
+        return instance
+    
+class ContactForm(forms.ModelForm):
+    class Meta:
+        model = Contact
+        fields = ['full_name', 'email_address', 'subject', 'message']
+        widgets = {
+            'full_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Full Name'}),
+            'email_address': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Enter Email Address'}),
+            'subject': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Subject'}),
+            'message': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Message'}),
+        }
