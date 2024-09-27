@@ -463,6 +463,7 @@ class DashboardView(View):
             'wards': wards,
             'guarantors': guarantors,
         }
+        
         username = request.session.get('username')
         if not username:
             return redirect('admin-login')  # Redirect to login if username is not in session
@@ -472,8 +473,12 @@ class DashboardView(View):
         except System_User.DoesNotExist:
             return redirect('admin-login')
         
+        # Add the 'user' object to the context
+        context['user'] = user
 
-        return render(request, 'dashboard.html', {'user': user})
+        # Pass the full context to the template
+        return render(request, 'dashboard.html', context)
+
     
 class Group_DashboardView(View):
     def get(self, request):
@@ -501,8 +506,10 @@ class Group_DashboardView(View):
             
         except System_User.DoesNotExist:
             return redirect('group-login')
+        
+        context['user'] = user
 
-        return render(request, 'group_dashboard.html', {'user': user})
+        return render(request, 'group_dashboard.html', context)
     
 class Bank_DashboardView(View):
     def get(self, request):
@@ -530,8 +537,10 @@ class Bank_DashboardView(View):
             
         except System_User.DoesNotExist:
             return redirect('bank-login')
+        
+        context['user'] = user
 
-        return render(request, 'bank_dashboard.html', {'user': user})
+        return render(request, 'bank_dashboard.html', context)
     
 class Member_DashboardView(View):
     def get(self, request):
@@ -559,8 +568,10 @@ class Member_DashboardView(View):
             
         except System_User.DoesNotExist:
             return redirect('member-login')
+        
+        context['user'] = user
 
-        return render(request, 'member_dashboard.html', {'user': user})
+        return render(request, 'member_dashboard.html', context)
  
 class Register_GroupView(View):
     template_name = 'register_group.html'
