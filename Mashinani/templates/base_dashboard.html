@@ -23,18 +23,19 @@
         
         <!-- Sent Parcels Dropdown -->
         <a class="nav-item" data-bs-toggle="collapse" href="#sentCollapse" role="button" aria-expanded="false" aria-controls="sentCollapse">
-            <i class="bi bi-box-seam icon-sent"></i> Group
+            <i class="bi bi-people icon-sent"></i> Group
         </a>
         <div class="collapse" id="sentCollapse">
-            <a href="{% url 'register-group' %}" class="nav-item collapse-item"><i class="bi bi-eye icon-view-sent"></i> Add Group</a>
+            <a href="{% url 'register-group' %}" class="nav-item collapse-item"><i class="bi bi-plus icon-view-sent"></i> Add Group</a>
         </div>
         
         <!-- Received Parcels Dropdown -->
         <a class="nav-item" data-bs-toggle="collapse" href="#receivedCollapse" role="button" aria-expanded="false" aria-controls="receivedCollapse">
-            <i class="bi bi-inbox icon-received"></i> Bank
+            <i class="bi bi-bank icon-received"></i>Bank
+
         </a>
         <div class="collapse" id="receivedCollapse">
-            <a href="{% url 'register-bank' %}" class="nav-item collapse-item"><i class="bi bi-eye icon-view-received"></i> Add Bank</a>
+            <a href="{% url 'register-bank' %}" class="nav-item collapse-item"><i class="bi bi-plus icon-view-received"></i> Add Bank</a>
         </div>
         
         <a href="{% url 'dashboard' %}" class="nav-item"><i class="bi bi-box-arrow-right icon-logout"></i> Logout</a>
