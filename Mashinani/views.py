@@ -1226,11 +1226,14 @@ class ApplicationView(FormView):
                 'error_message': 'You already have an hanging application. Please be patient, Your Loan will be Disbursed soon!'
             })
             
-        allocation.amount -= application.proposed_amount 
-        allocation.save 
-        
+
+
+        allocation.amount -= Decimal(application.proposed_amount)  # Convert float to Decimal
+        allocation.save()  # Add parentheses to call the save method
+
         # Save the form instance
         application.save()
+
         
         # Create and save the message
         message_no = self.generate_unique_message_number()
@@ -1400,6 +1403,10 @@ class DisbursementView(FormView):
             message_date=timezone.now().date()
         )
         message.save()
+        
+        member.loan_bal = disbursed_amount
+        member.loan_status = "closed"
+        member.save()
 
         # Create and save the loan
         payment_no = unique_payment_number()
@@ -1536,9 +1543,9 @@ class LoanPaymentView(View):
             loan_duration = disbursement.loan_duration_months
 
             elapsed_months = calculate_time_elapsed_in_months(disbursement_date)
-            new_loan_interest = calculate_compound_interest(loan.balance, interest_rate, elapsed_months)
+            loan_interest = calculate_compound_interest(loan.balance, interest_rate, elapsed_months)
             loan.loan_interest = interest_rate
-            loan.principal_interest = new_loan_interest
+            loan.principal_interest = loan.principal + loan_interest
 
             # Ensure payment amount does not exceed the loan balance
             if payment_amount > loan.balance:

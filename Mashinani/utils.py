@@ -241,8 +241,12 @@ def calculate_compound_interest(principal, monthly_rate, number_of_months):
         number_of_months = Decimal(number_of_months)
         
         # Calculate the amount after interest
-        amount = principal * (1 + monthly_rate / 100) ** number_of_months
+        if(number_of_months >= 1):
+            interest = principal * (monthly_rate / 100) ** number_of_months
+        else:
+            interest = 0
+            
         
-        return amount
+        return interest
     
     
