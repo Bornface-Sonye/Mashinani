@@ -488,8 +488,14 @@ class Group_DashboardView(View):
 
         try:
             user = System_User.objects.get(username=username)
+            
+            # Get the group associated with the logged-in username
+            group = Group.objects.get(username=username)
+            
+            # Count members in the specific group using group_no
+            member_count = Member.objects.filter(group_no=group.group_no).count()
+
             banks = Bank.objects.all()
-            groups = Group.objects.all()
             defaulters = Defaulter.objects.all()
             constituencies = Constituency.objects.all()
             wards = Ward.objects.all()
@@ -497,19 +503,20 @@ class Group_DashboardView(View):
             
             context = {
                 'banks': banks,
-                'groups': groups,
+                'group': group,  # Send group information to the template
+                'member_count': member_count,  # Send the member count for the specific group
                 'defaulters': defaulters,
                 'constituencies': constituencies,
                 'wards': wards,
                 'guarantors': guarantors,
+                'user': user,
             }
-            
-        except System_User.DoesNotExist:
+
+        except (System_User.DoesNotExist, Group.DoesNotExist):
             return redirect('group-login')
-        
-        context['user'] = user
 
         return render(request, 'group_dashboard.html', context)
+
     
 class Bank_DashboardView(View):
     def get(self, request):
@@ -547,6 +554,8 @@ class Member_DashboardView(View):
         username = request.session.get('username')
         if not username:
             return redirect('member-login')  # Redirect to login if username is not in session
+        
+        
 
         try:
             user = System_User.objects.get(username=username)
