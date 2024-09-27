@@ -1,27 +1,90 @@
 {% extends 'member_base_dashboard.html' %}
-{% load static %}
 {% block content %}
-<link rel="stylesheet" href="{% static 'css/faqs.css' %}">
+<style>
+    .faqs-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+        font-size: 2.2rem;
+        font-weight: 600;
+        color: #333;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .card {
+        border: none;
+        background-color: #fff;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-header {
+        background-color: #007bff;
+        color: #fff;
+        border-radius: 8px;
+        padding: 10px 15px;
+        cursor: pointer;
+    }
+
+    .card-header h5 {
+        margin: 0;
+        font-size: 1.2rem;
+        font-weight: 500;
+    }
+
+    .faq-question {
+        color: #fff;
+        text-decoration: none;
+        font-size: 1.1rem;
+        display: block;
+        text-align: left;
+        width: 100%;
+    }
+
+    .card-body {
+        display: none;
+        padding: 15px;
+        background-color: #f7f7f7;
+        color: #333;
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+</style>
+
 <div class="container faqs-container">
     <h2>Frequently Asked Questions</h2>
     <div id="accordion">
         {% for faq in faqs %}
         <div class="card">
-            <div class="card-header" id="heading{{ forloop.counter }}">
-                <h3 class="mb-0">
-                    <button class="btn btn-link" data-toggle="collapse" data-target="#collapse{{ forloop.counter }}" aria-expanded="true" aria-controls="collapse{{ forloop.counter }}">
-                        {{ faq.question }}
-                    </button>
-                </h3>
+            <div class="card-header" id="heading{{ forloop.counter }}" onclick="toggleAnswer({{ forloop.counter }})">
+                <h5>
+                    <a class="faq-question">{{ faq.question }}</a>
+                </h5>
             </div>
-
-            <div id="collapse{{ forloop.counter }}" class="collapse" aria-labelledby="heading{{ forloop.counter }}" data-parent="#accordion">
-                <div class="card-body">
-                    {{ faq.answer }}
-                </div>
+            <div class="card-body" id="answer{{ forloop.counter }}">
+                {{ faq.answer }}
             </div>
         </div>
         {% endfor %}
     </div>
 </div>
+
+<script>
+    function toggleAnswer(id) {
+        var answer = document.getElementById('answer' + id);
+        if (answer.style.display === "none" || answer.style.display === "") {
+            answer.style.display = "block";
+        } else {
+            answer.style.display = "none";
+        }
+    }
+</script>
 {% endblock %}

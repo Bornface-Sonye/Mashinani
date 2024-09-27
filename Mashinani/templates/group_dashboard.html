@@ -1,4 +1,4 @@
-{% extends 'base_dashboard.html' %}
+{% extends 'group_base_dashboard.html' %}
 {% load static %}
 {% block content %}
 <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
@@ -10,7 +10,7 @@
         <div class="collapse navbar-collapse justify-content-end">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
-                    <span class="nav-link">Welcome, {{ user.username }}!</span>
+                    <span class="nav-link">Welcome, {{ group_name }}!</span>
                 </li>
             </ul>
         </div>
@@ -28,113 +28,63 @@
                 </div>
                 <div class="card-body">
                     <h4 class="text-center">{{ member_count }}</h4>
-                    <p class="text-center">Total Members in Your Group</p>
                 </div>
             </div>
         </div>
 
-        <!-- Constituencies Flexbox -->
+        <!-- Arrears Flexbox -->
         <div class="col-lg-4 col-md-6">
             <div class="card shadow-sm border-0">
-                <div class="card-header bg-success text-white">
-                    <h3>Constituencies</h3>
+                <div class="card-header bg-primary text-white">
+                    <h3>Total Members in Arrears</h3>
                 </div>
                 <div class="card-body">
-                    {% if constituencies %}
-                        <ul class="list-group list-group-flush">
-                            {% for constituency in constituencies %}
-                                <li class="list-group-item">{{ constituency.constituency_name }}</li>
-                            {% endfor %}
-                        </ul>
-                    {% else %}
-                        <p class="text-muted text-center">No constituencies available.</p>
-                    {% endif %}
+                    <h4 class="text-center">{{ loan_count }}</h4>
                 </div>
             </div>
         </div>
 
-        <!-- Wards Flexbox -->
+        <!-- Loans Flexbox -->
         <div class="col-lg-4 col-md-6">
             <div class="card shadow-sm border-0">
-                <div class="card-header bg-warning text-white">
-                    <h3>Wards</h3>
+                <div class="card-header bg-primary text-white">
+                    <h3>Total Loans</h3>
                 </div>
                 <div class="card-body">
-                    {% if wards %}
-                        <ul class="list-group list-group-flush">
-                            {% for ward in wards %}
-                                <li class="list-group-item">{{ ward.ward_name }}</li>
-                            {% endfor %}
-                        </ul>
-                    {% else %}
-                        <p class="text-muted text-center">No wards available.</p>
-                    {% endif %}
+                    <h4 class="text-center">Ksh. {{ loan_arrears }}</h4>
                 </div>
             </div>
         </div>
 
-        <!-- Banks Flexbox -->
+        <!-- Account Balance Flexbox -->
         <div class="col-lg-4 col-md-6">
             <div class="card shadow-sm border-0">
-                <div class="card-header bg-danger text-white">
-                    <h3>Banks</h3>
+                <div class="card-header bg-primary text-white">
+                    <h3>Account Balance</h3>
                 </div>
                 <div class="card-body">
-                    {% if banks %}
-                        <ul class="list-group list-group-flush">
-                            {% for bank in banks %}
-                                <li class="list-group-item">{{ bank.bank_name }}</li>
-                            {% endfor %}
-                        </ul>
-                    {% else %}
-                        <p class="text-muted text-center">No banks available.</p>
-                    {% endif %}
+                    <h4 class="text-center">Ksh. {{ account_bal }}</h4>
                 </div>
             </div>
         </div>
 
-        <!-- Groups Flexbox -->
-        <div class="col-12">
+        <!-- Arrears Flexbox -->
+        <div class="col-lg-4 col-md-6">
             <div class="card shadow-sm border-0">
-                <div class="card-header bg-info text-white">
-                    <h3>Groups</h3>
+                <div class="card-header bg-primary text-white">
+                    <h3>Financial Balance</h3>
                 </div>
                 <div class="card-body">
-                    {% if groups %}
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Group Number</th>
-                                    <th scope="col">Name</th>
-                                    <th scope="col">Ward of Operation</th>
-                                    <th scope="col">Guarantor</th>
-                                    <th scope="col">Phone Number</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for group in groups %}
-                                    <tr>
-                                        <td>{{ group.group_no }}</td>
-                                        <td>{{ group.group_name }}</td>
-                                        <td>{{ group.ward }}</td>
-                                        <td>{{ group.guarantor }}</td>
-                                        <td>{{ group.phone_number }}</td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    {% else %}
-                        <p class="text-muted text-center">No groups available.</p>
-                    {% endif %}
+                    <h4 class="text-center">Ksh. {{ debt }}</h4>
                 </div>
             </div>
         </div>
 
-        <!-- Guarantors Flexbox -->
+        <!-- Guarantor Flexbox -->
         <div class="col-12">
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-secondary text-white">
-                    <h3>Guarantors</h3>
+                    <h3>Guarantor Information</h3>
                 </div>
                 <div class="card-body">
                     {% if guarantors %}

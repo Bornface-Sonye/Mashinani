@@ -486,30 +486,32 @@ class Group_DashboardView(View):
         if not username:
             return redirect('group-login')  # Redirect to login if username is not in session
 
-        try:
-            user = System_User.objects.get(username=username)
-            
+        try:           
             # Get the group associated with the logged-in username
             group = Group.objects.get(username=username)
-            
+            group_name = group.group_name
+            # Fetch Account object related to group's account
+            account = get_object_or_404(Account, account_no=group.account.account_no)
             # Count members in the specific group using group_no
+            members = get_object_or_404(Member, group_no=group.group_no)
+            national_id_no = members.national_id_no
+            account_bal = account.account_bal
             member_count = Member.objects.filter(group_no=group.group_no).count()
-
+            loan_count = Loan.objects.filter(national_id_no=national_id_no, balance__gt=0).count()
+            loan_arrears = Loan.objects.filter(national_id_no=national_id_no).aggregate(Sum('balance'))['balance__sum'] or 0
+            debt = account_bal - loan_arrears
             banks = Bank.objects.all()
-            defaulters = Defaulter.objects.all()
-            constituencies = Constituency.objects.all()
-            wards = Ward.objects.all()
             guarantors = Guarantor.objects.all()
             
             context = {
                 'banks': banks,
-                'group': group,  # Send group information to the template
+                'group_name': group_name,  # Send group information to the template
                 'member_count': member_count,  # Send the member count for the specific group
-                'defaulters': defaulters,
-                'constituencies': constituencies,
-                'wards': wards,
+                'account_bal': account_bal,
+                'loan_count': loan_count,
+                'debt': debt,
+                'loan_arrears': loan_arrears,
                 'guarantors': guarantors,
-                'user': user,
             }
 
         except (System_User.DoesNotExist, Group.DoesNotExist):
@@ -525,27 +527,25 @@ class Bank_DashboardView(View):
             return redirect('bank-login')  # Redirect to login if username is not in session
 
         try:
-            user = System_User.objects.get(username=username)
-            banks = Bank.objects.all()
+            bank = Bank.objects.get(username=username)
+            account = get_object_or_404(Account, account_no=bank.account.account_no)
+            account_bal = account.account_bal
+            bank_name = bank.bank_name
+            bank_no = bank.bank_no
+            total_loan = Loan.objects.filter(bank_no=bank_no).aggregate(Sum('balance'))['balance__sum'] or 0
             groups = Group.objects.all()
             defaulters = Defaulter.objects.all()
-            constituencies = Constituency.objects.all()
-            wards = Ward.objects.all()
-            guarantors = Guarantor.objects.all()
             
             context = {
-                'banks': banks,
+                'bank_name': bank_name,
                 'groups': groups,
                 'defaulters': defaulters,
-                'constituencies': constituencies,
-                'wards': wards,
-                'guarantors': guarantors,
+                'total_loan': total_loan,
+                'account_bal': account_bal,
             }
             
         except System_User.DoesNotExist:
             return redirect('bank-login')
-        
-        context['user'] = user
 
         return render(request, 'bank_dashboard.html', context)
     
@@ -558,27 +558,32 @@ class Member_DashboardView(View):
         
 
         try:
-            user = System_User.objects.get(username=username)
+            member = Member.objects.get(username=username)
+            account = get_object_or_404(Account, account_no=member.account_no)
+            group = get_object_or_404(Group, group_no=member.group_no.group_no)
+            loan_status = member.loan_status
+            account_bal = account.account_bal
+            last_name = member.last_name
+            loan_staus = member.loan_status
+            grp_worth = member.grp_worth
+            loan_bal = member.loan_bal
+            allocations = Allocation.objects.all()
             banks = Bank.objects.all()
-            groups = Group.objects.all()
-            defaulters = Defaulter.objects.all()
-            constituencies = Constituency.objects.all()
-            wards = Ward.objects.all()
-            guarantors = Guarantor.objects.all()
+            group_name = group.group_name
             
             context = {
+                'last_name': last_name,
+                'group_name': group_name,
+                'account_bal': account_bal,
+                'allocations': allocations,
                 'banks': banks,
-                'groups': groups,
-                'defaulters': defaulters,
-                'constituencies': constituencies,
-                'wards': wards,
-                'guarantors': guarantors,
+                'loan_bal': loan_bal,
+                'grp_worth': grp_worth,
+                'loan_status': loan_status,
             }
             
         except System_User.DoesNotExist:
             return redirect('member-login')
-        
-        context['user'] = user
 
         return render(request, 'member_dashboard.html', context)
  
@@ -668,27 +673,37 @@ class GroupFAQsView(View):
     def get(self, request):
         faqs = [
             {
-                "question": "What is KIA Parcels?",
-                "answer": "KIA Parcels is a parcel management platform developed in July 2024 for Kisumu International Airport by Kasuku Tech Junction."
+                "question": "What is a group in Pesa Mashinani?",
+                "answer": "A group in Pesa Mashinani consists of members from the same local ward who come together to access financial services such as loans. The group collectively improves members' chances of loan approval and facilitates easier financial management."
             },
             {
-                "question": "How can I send a parcel?",
-                "answer": "To send a parcel, simply navigate to the 'Send Parcel' section on our platform, fill in the necessary details, and follow the instructions."
+                "question": "How do I join a group?",
+                "answer": "To join a group, you need to be added by your local ward group admin or an existing member. Once added, you will be notified, and you can create your member account on Pesa Mashinani to begin transacting."
             },
             {
-                "question": "How can I track my sent parcels?",
-                "answer": "You can track your sent parcels by visiting the 'Sent Parcels' section and entering your tracking number."
+                "question": "How do I create a group?",
+                "answer": "To create a group, you must first visit the Mashinani office with the appropriate registration forms for your group. Once registered, log in to your Pesa Mashinani account, go to the 'Groups' section, and follow the instructions to create your group."
             },
             {
-                "question": "How can I receive a parcel?",
-                "answer": "You will be notified when a parcel addressed to you arrives. You can then visit the 'Received Parcels' section to check its status."
+                "question": "What are the benefits of joining a group?",
+                "answer": "Joining a group allows you to access group loans, pool resources, and receive collective support for loan repayments. Groups can also access better loan terms, financial advice, and enhanced loan security due to their collective strength."
             },
             {
-                "question": "How do I contact support?",
-                "answer": "For any assistance, please visit our 'Contact Us' page where you can find our contact details and a form to send us a message."
+                "question": "How do I leave a group?",
+                "answer": "You can leave a group by visiting the 'My Groups' section in your Pesa Mashinani account and selecting the group you want to exit. However, you cannot leave if you have an outstanding loan tied to the group."
             },
+            {
+                "question": "How can I contact group admins for assistance?",
+                "answer": "You can communicate directly with your group admin through the group chat feature within your Pesa Mashinani account. For further help, you can also visit the 'Contact Us' page."
+            },
+            {
+                "question": "How can groups register with Pesa Mashinani?",
+                "answer": "Groups must physically visit the Mashinani office with their official registration forms to complete the registration process. Once registered, they can create a group account on the platform and begin their operations, including accessing loans."
+            }
         ]
-        return render(request, self.template_name, {'faqs': faqs}) 
+        return render(request, self.template_name, {'faqs': faqs})
+
+
     
 class BankFAQsView(View):
     template_name = 'bank_faqs.html'
@@ -696,27 +711,37 @@ class BankFAQsView(View):
     def get(self, request):
         faqs = [
             {
-                "question": "What is KIA Parcels?",
-                "answer": "KIA Parcels is a parcel management platform developed in July 2024 for Kisumu International Airport by Kasuku Tech Junction."
+                "question": "What is Pesa Mashinani?",
+                "answer": "Pesa Mashinani is a comprehensive platform that connects banks and lenders with borrowers, facilitating secure management of loans and financial services in rural areas."
             },
             {
-                "question": "How can I send a parcel?",
-                "answer": "To send a parcel, simply navigate to the 'Send Parcel' section on our platform, fill in the necessary details, and follow the instructions."
+                "question": "How do banks manage loan applications on Pesa Mashinani?",
+                "answer": "Banks can access the 'Loan Management' section upon logging into their Pesa Mashinani account. Here, they can review pending loan applications, assess borrower details and credit history, and either approve or reject loan requests."
             },
             {
-                "question": "How can I track my sent parcels?",
-                "answer": "You can track your sent parcels by visiting the 'Sent Parcels' section and entering your tracking number."
+                "question": "What is the loan disbursement process for banks?",
+                "answer": "Once a loan is approved, banks can disburse the funds directly through the Pesa Mashinani platform. Borrowers will receive a notification, and the funds will be transferred to their registered bank account or mobile money wallet."
             },
             {
-                "question": "How can I receive a parcel?",
-                "answer": "You will be notified when a parcel addressed to you arrives. You can then visit the 'Received Parcels' section to check its status."
+                "question": "How can banks track loan repayments?",
+                "answer": "Banks can track loan repayments using the 'Repayment Dashboard,' which provides a detailed schedule of upcoming and past payments. Automated reminders are also sent to borrowers and banks when repayments are due or completed."
             },
             {
-                "question": "How do I contact support?",
-                "answer": "For any assistance, please visit our 'Contact Us' page where you can find our contact details and a form to send us a message."
+                "question": "Can banks generate reports on loan performance?",
+                "answer": "Yes, Pesa Mashinani includes a robust reporting tool that allows banks to generate detailed financial reports, track loan performance, and analyze repayment trends. These reports can be exported for further analysis."
             },
+            {
+                "question": "How can banks communicate with borrowers?",
+                "answer": "Banks can communicate directly with borrowers using the platform’s messaging feature. Automatic notifications are also sent to borrowers regarding loan approvals, repayment schedules, and overdue payments."
+            },
+            {
+                "question": "How do banks handle defaulted loans?",
+                "answer": "In cases of loan defaults, banks can use the 'Loan Recovery' module within the platform. This tool helps track defaults, send notices to borrowers, and take recovery actions as per the bank’s policies."
+            }
         ]
         return render(request, self.template_name, {'faqs': faqs})
+
+
     
 class MemberFAQsView(View):
     template_name = 'member_faqs.html'
@@ -724,27 +749,33 @@ class MemberFAQsView(View):
     def get(self, request):
         faqs = [
             {
-                "question": "What is KIA Parcels?",
-                "answer": "KIA Parcels is a parcel management platform developed in July 2024 for Kisumu International Airport by Kasuku Tech Junction."
+                "question": "How do I join a group?",
+                "answer": "To join a group, you must first approach your local ward group. If approved by the group admin, you will be added as a member. Only after group membership can you create a member account with Pesa Mashinani and access available services."
             },
             {
-                "question": "How can I send a parcel?",
-                "answer": "To send a parcel, simply navigate to the 'Send Parcel' section on our platform, fill in the necessary details, and follow the instructions."
+                "question": "How can groups register with Pesa Mashinani?",
+                "answer": "Groups must visit the Mashinani office with the required registration forms. Once verified and registered by the office, the group will be able to create an account and perform transactions on the platform."
             },
             {
-                "question": "How can I track my sent parcels?",
-                "answer": "You can track your sent parcels by visiting the 'Sent Parcels' section and entering your tracking number."
+                "question": "How do I create an account with Pesa Mashinani?",
+                "answer": "After being added to a local ward group, you can create an account with Pesa Mashinani by using the group’s registration credentials and completing the member registration process on the platform."
             },
             {
-                "question": "How can I receive a parcel?",
-                "answer": "You will be notified when a parcel addressed to you arrives. You can then visit the 'Received Parcels' section to check its status."
+                "question": "What transactions can I complete as a member?",
+                "answer": "As a member, you can apply for loans, view loan statuses, make repayments, and participate in group financial activities through the Pesa Mashinani platform."
+            },
+            {
+                "question": "What is required for loan application?",
+                "answer": "Once you are registered as a member, you can apply for loans through your group. Ensure your group has an active account with Pesa Mashinani to be eligible for loans."
             },
             {
                 "question": "How do I contact support?",
-                "answer": "For any assistance, please visit our 'Contact Us' page where you can find our contact details and a form to send us a message."
+                "answer": "For any assistance, you can visit the 'Contact Us' page in your account or visit the nearest Mashinani office for in-person support."
             },
         ]
-        return render(request, self.template_name, {'faqs': faqs})         
+        return render(request, self.template_name, {'faqs': faqs})
+
+        
         
 class AddMemberView(View):
     def get(self, request):
@@ -1148,12 +1179,12 @@ class ApplicationView(FormView):
         bank = get_object_or_404(Bank, bank_no=allocation.bank_no)
 
         # Calculate the total applied amount for the allocation_no
-        total_applied_amount = Application.objects.filter(allocation_no=allocation.allocation_no).aggregate(total=models.Sum('loan_amount'))['total'] or 0
-        remaining_amount = allocation.amount - total_applied_amount
+        #total_applied_amount = Application.objects.filter(allocation_no=allocation.allocation_no).aggregate(total=models.Sum('loan_amount'))['total'] or 0
+        #remaining_amount = allocation.amount - total_applied_amount
 
         # Check if the loan amount to be applied is less than or equal to the remaining amount
         loan_amount = form.cleaned_data['loan_amount']
-        if loan_amount > remaining_amount:
+        if loan_amount > allocation.amount:
             return render(self.request, self.template_name, {
                 'form': form,
                 'allocation_no': allocation_no,
@@ -1194,6 +1225,9 @@ class ApplicationView(FormView):
                 'error_application_no': application_no,
                 'error_message': 'You already have an hanging application. Please be patient, Your Loan will be Disbursed soon!'
             })
+            
+        allocation.amount -= application.proposed_amount 
+        allocation.save 
         
         # Save the form instance
         application.save()

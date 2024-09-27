@@ -1,4 +1,4 @@
-{% extends 'base_dashboard.html' %}
+{% extends 'member_base_dashboard.html' %}
 {% load static %}
 {% block content %}
 <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
@@ -10,7 +10,7 @@
         <div class="collapse navbar-collapse justify-content-end">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
-                    <span class="nav-link">Welcome, {{ user.username }}!</span>
+                    <span class="nav-link">Welcome, {{ last_name }}!</span>
                 </li>
             </ul>
         </div>
@@ -23,42 +23,92 @@
         <div class="col-lg-4 col-md-6">
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-primary text-white">
-                    <h3>Constituencies</h3>
+                    <h3>Loan Status</h3>
                 </div>
                 <div class="card-body">
-                    {% if constituencies %}
-                        <ul class="list-group list-group-flush">
-                            {% for constituency in constituencies %}
-                                <li class="list-group-item">{{ constituency.constituency_name }}</li>
-                            {% endfor %}
-                        </ul>
+                    <h4 class="text-center">{{ loan_status }}</h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white">
+                    <h3>Account Balance</h3>
+                </div>
+                <div class="card-body">
+                    <h4 class="text-center">Ksh. {{ account_bal }}</h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white">
+                    <h3>Loan Arears</h3>
+                </div>
+                <div class="card-body">
+                    <h4 class="text-center">Ksh. {{ loan_bal }}</h4>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-secondary text-white">
+                    <h3>Allocations</h3>
+                </div>
+                <div class="card-body">
+                    {% if allocations %}
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Bank Number</th>
+                                    <th scope="col">Amount Available</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for allocation in allocations %}
+                                    <tr>
+                                        <td>{{ allocation.bank_no }}</td>
+                                        <td>{{ allocation.amount }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     {% else %}
-                        <p class="text-muted text-center">No constituencies available.</p>
+                        <p class="text-muted text-center">No allocations available.</p>
                     {% endif %}
                 </div>
             </div>
         </div>
+
         <div class="col-lg-4 col-md-6">
             <div class="card shadow-sm border-0">
-                <div class="card-header bg-success text-white">
-                    <h3>Wards</h3>
+                <div class="card-header bg-primary text-white">
+                    <h3>Group</h3>
                 </div>
                 <div class="card-body">
-                    {% if wards %}
-                        <ul class="list-group list-group-flush">
-                            {% for ward in wards %}
-                                <li class="list-group-item">{{ ward.ward_name }}</li>
-                            {% endfor %}
-                        </ul>
-                    {% else %}
-                        <p class="text-muted text-center">No wards available.</p>
-                    {% endif %}
+                    <h4 class="text-center">{{ group_name }}</h4>
                 </div>
             </div>
         </div>
+
         <div class="col-lg-4 col-md-6">
             <div class="card shadow-sm border-0">
-                <div class="card-header bg-warning text-white">
+                <div class="card-header bg-primary text-white">
+                    <h3>Group Worth</h3>
+                </div>
+                <div class="card-body">
+                    <h4 class="text-center">{{ grp_worth }}</h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-secondary text-white">
                     <h3>Banks</h3>
                 </div>
                 <div class="card-body">
@@ -70,107 +120,6 @@
                         </ul>
                     {% else %}
                         <p class="text-muted text-center">No banks available.</p>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-        <div class="col-12">
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-info text-white">
-                    <h3>Groups</h3>
-                </div>
-                <div class="card-body">
-                    {% if groups %}
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Group Number</th>
-                                    <th scope="col">Name</th>
-                                    <th scope="col">Ward of Operation</th>
-                                    <th scope="col">Guarantor</th>
-                                    <th scope="col">Phone Number</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for group in groups %}
-                                    <tr>
-                                        <td>{{ group.group_no }}</td>
-                                        <td>{{ group.group_name }}</td>
-                                        <td>{{ group.ward }}</td>
-                                        <td>{{ group.guarantor }}</td>
-                                        <td>{{ group.phone_number }}</td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    {% else %}
-                        <p class="text-muted text-center">No groups available.</p>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-        <div class="col-12">
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-danger text-white">
-                    <h3>Guarantors</h3>
-                </div>
-                <div class="card-body">
-                    {% if guarantors %}
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th scope="col">First Name</th>
-                                    <th scope="col">Last Name</th>
-                                    <th scope="col">Occupation</th>
-                                    <th scope="col">Ward of Residence</th>
-                                    <th scope="col">Phone Number</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for guarantor in guarantors %}
-                                    <tr>
-                                        <td>{{ guarantor.first_name }}</td>
-                                        <td>{{ guarantor.last_name }}</td>
-                                        <td>{{ guarantor.occupation }}</td>
-                                        <td>{{ guarantor.ward }}</td>
-                                        <td>{{ guarantor.phone_number }}</td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    {% else %}
-                        <p class="text-muted text-center">No guarantors available.</p>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-        <div class="col-12">
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-secondary text-white">
-                    <h3>Defaulters</h3>
-                </div>
-                <div class="card-body">
-                    {% if defaulters %}
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Defaulter Id</th>
-                                    <th scope="col">Bank Number</th>
-                                    <th scope="col">Amount Owed</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for defaulter in defaulters %}
-                                    <tr>
-                                        <td>{{ defaulter.national_id_no }}</td>
-                                        <td>{{ defaulter.bank_no }}</td>
-                                        <td>{{ defaulter.amount_owed }}</td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    {% else %}
-                        <p class="text-muted text-center">No defaulters available.</p>
                     {% endif %}
                 </div>
             </div>
